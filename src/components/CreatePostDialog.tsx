@@ -7,14 +7,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Language, getTranslation } from "@/utils/translations";
 
-export const CreatePostDialog = () => {
+interface CreatePostDialogProps {
+  language: Language;
+}
+
+export const CreatePostDialog = ({ language }: CreatePostDialogProps) => {
   const { toast } = useToast();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
   const [rating, setRating] = useState<"good" | "neutral" | "bad">("neutral");
   const [comment, setComment] = useState("");
+
+  const t = (key: string) => getTranslation(language, key);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,13 +44,11 @@ export const CreatePostDialog = () => {
       return;
     }
 
-    // Here we would normally submit to an API
     toast({
       title: "Post created",
       description: "Your post has been created successfully",
     });
 
-    // Reset form
     setTitle("");
     setCategory("");
     setTags("");
@@ -56,43 +61,43 @@ export const CreatePostDialog = () => {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <PlusCircle className="w-4 h-4" />
-          Create Post
+          {t("createPost")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create a new post</DialogTitle>
+          <DialogTitle>{t("createNewPost")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t("title_label")}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Product or store name"
+              placeholder={t("title_placeholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t("category_label")}</Label>
             <Input
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g., Electronics, Food, Fashion"
+              placeholder={t("category_placeholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags (comma separated)</Label>
+            <Label htmlFor="tags">{t("tags_label")}</Label>
             <Input
               id="tags"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              placeholder="e.g., quiet, eco-friendly, spacious"
+              placeholder={t("tags_placeholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label>Rating</Label>
+            <Label>{t("rating_label")}</Label>
             <RadioGroup
               value={rating}
               onValueChange={(value: "good" | "neutral" | "bad") => setRating(value)}
@@ -100,28 +105,30 @@ export const CreatePostDialog = () => {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="good" id="good" />
-                <Label htmlFor="good">Good</Label>
+                <Label htmlFor="good">{t("good")}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="neutral" id="neutral" />
-                <Label htmlFor="neutral">Neutral</Label>
+                <Label htmlFor="neutral">{t("neutral")}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="bad" id="bad" />
-                <Label htmlFor="bad">Bad</Label>
+                <Label htmlFor="bad">{t("bad")}</Label>
               </div>
             </RadioGroup>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="comment">Comment {rating === "bad" && "(required)"}</Label>
+            <Label htmlFor="comment">
+              {t("comment_label")} {rating === "bad" && t("comment_required")}
+            </Label>
             <Textarea
               id="comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your experience..."
+              placeholder={t("comment_placeholder")}
             />
           </div>
-          <Button type="submit" className="w-full">Create Post</Button>
+          <Button type="submit" className="w-full">{t("submit")}</Button>
         </form>
       </DialogContent>
     </Dialog>

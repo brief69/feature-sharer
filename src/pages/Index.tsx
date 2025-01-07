@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { PostCard } from "@/components/PostCard";
 import { CreatePostDialog } from "@/components/CreatePostDialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Language, defaultLanguage, getTranslation } from "@/utils/translations";
 
-// Mock data for demonstration
 const MOCK_POSTS = [
   {
     id: 1,
@@ -40,6 +41,9 @@ const CATEGORIES = ["All", "Food & Beverage", "Electronics", "Fitness", "Fashion
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [language, setLanguage] = useState<Language>(defaultLanguage);
+
+  const t = (key: string) => getTranslation(language, key);
 
   const filteredPosts = MOCK_POSTS.filter((post) => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,13 +56,21 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Feature Information Hub</h1>
-          <CreatePostDialog />
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <div className="flex gap-4 items-center">
+            <Button
+              variant="outline"
+              onClick={() => setLanguage(language === "en" ? "ja" : "en")}
+            >
+              {language === "en" ? "日本語" : "English"}
+            </Button>
+            <CreatePostDialog language={language} />
+          </div>
         </div>
 
         <div className="space-y-6">
           <Input
-            placeholder="Search by title or tags..."
+            placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-w-md"
@@ -72,20 +84,20 @@ const Index = () => {
                 className="cursor-pointer"
                 onClick={() => setSelectedCategory(category)}
               >
-                {category}
+                {category === "All" ? t("all") : category}
               </Badge>
             ))}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredPosts.map((post) => (
-              <PostCard key={post.id} {...post} />
+              <PostCard key={post.id} {...post} language={language} />
             ))}
           </div>
 
           {filteredPosts.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
-              No posts found. Try adjusting your search or create a new post.
+              {t("noPostsFound")}
             </div>
           )}
         </div>

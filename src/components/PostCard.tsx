@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ThumbsDown, ThumbsUp, Minus } from "lucide-react";
+import { Language, getTranslation } from "@/utils/translations";
 
 interface PostCardProps {
   title: string;
@@ -9,9 +10,12 @@ interface PostCardProps {
   rating: "good" | "neutral" | "bad";
   trustScore: number;
   comment?: string;
+  language: Language;
 }
 
-export const PostCard = ({ title, category, tags, rating, trustScore, comment }: PostCardProps) => {
+export const PostCard = ({ title, category, tags, rating, trustScore, comment, language }: PostCardProps) => {
+  const t = (key: string) => getTranslation(language, key);
+
   const getRatingIcon = () => {
     switch (rating) {
       case "good":
@@ -38,7 +42,7 @@ export const PostCard = ({ title, category, tags, rating, trustScore, comment }:
         </div>
         <div className="flex items-center gap-2">
           {getRatingIcon()}
-          <span className={`font-semibold ${getTrustColor()}`}>{trustScore}% trusted</span>
+          <span className={`font-semibold ${getTrustColor()}`}>{trustScore}% {t("trusted")}</span>
         </div>
       </CardHeader>
       <CardContent>
@@ -52,7 +56,9 @@ export const PostCard = ({ title, category, tags, rating, trustScore, comment }:
         {comment && <p className="text-sm text-muted-foreground">{comment}</p>}
       </CardContent>
       <CardFooter className="text-sm text-muted-foreground">
-        <button className="hover:text-primary transition-colors">Verify this information</button>
+        <button className="hover:text-primary transition-colors">
+          {t("verify")}
+        </button>
       </CardFooter>
     </Card>
   );
